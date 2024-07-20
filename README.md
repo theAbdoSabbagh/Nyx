@@ -1,5 +1,7 @@
 # Nyx - a better, more efficient alternative to Dragon center and MSI center
 
+![Nyx](https://raw.githubusercontent.com/theAbdoSabbagh/Nyx/main/imgs/img1.png)
+
 - [What is Nyx?](#what-is-nyx)
 - [Features](#features)
 - [Planned features](#planned-features)
