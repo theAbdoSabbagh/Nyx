@@ -1,0 +1,4 @@
+rich
+PyQt5
+pynvml
+psutil
