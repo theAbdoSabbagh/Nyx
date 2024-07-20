@@ -1,0 +1,8 @@
+tools
+.vscode
+__pycache__
+*.pyc
+exeified
+tests
+unmodified_pages
+ui
