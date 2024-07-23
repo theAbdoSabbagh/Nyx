@@ -105,7 +105,7 @@ class AppRunner:
 
     def create_tray_icon(self):
         # Load your custom icon
-        icon_path = r"icon/nyx.png"
+        icon_path = r"frontend/icons/nyx.png"
         icon = QtGui.QIcon(icon_path)
         self.tray_icon = QtWidgets.QSystemTrayIcon(icon, self.app)
         
