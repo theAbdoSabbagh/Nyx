@@ -1,5 +1,7 @@
-import os, sys, multiprocessing
-from PyQt5 import QtWidgets, QtCore
+import os
+import sys
+import multiprocessing
+from PyQt5 import QtWidgets, QtCore, QtGui
 from backend.logger import Logger
 from backend.error_dumper import ErrorDumper
 from backend.utils import Utils
@@ -27,12 +29,10 @@ class AppRunner:
             self.error_dumper = ErrorDumper(self.error_logs_path)
             # Set the custom excepthook
             sys.excepthook = self._custom_excepthook
+            self.create_tray_icon()
 
     def _custom_excepthook(self, exception_type, exception_value, traceback):
-        self.error_dumper.dump_error(
-            exception_type.__name__,
-            str(exception_value),
-        )
+        self.error_dumper.dump_error(exception_type.__name__, str(exception_value))
 
     def calculate_scale_factor(self, app):
         screen = app.primaryScreen()
@@ -58,10 +58,32 @@ class AppRunner:
 
         return scale_factor
 
+    def hide_window(self):
+        self.main_window.hide()
+        self.tray_icon.setVisible(True)
+
+    def show_window(self):
+        self.main_window.showNormal()
+        self.main_window.activateWindow()
+        self.tray_icon.setVisible(False)
+
+    def exit_app(self):
+        self.tray_icon.setVisible(False)
+        self.app.quit()
+
+    def create_tray_icon(self):
+        # Load your custom icon
+        image = QtGui.QIcon(r"icon\nyx.png")
+        self.tray_icon = QtWidgets.QSystemTrayIcon(image, self.app)
+        tray_menu = QtWidgets.QMenu()
+        show_action = tray_menu.addAction("Show")
+        exit_action = tray_menu.addAction("Exit Nyx")
+        show_action.triggered.connect(self.show_window)
+        exit_action.triggered.connect(self.exit_app)
+        self.tray_icon.setContextMenu(tray_menu)
+
     def run(self):
         self.logger.debug("Displaying main window")
-        self.app = None
-        self.app = QtWidgets.QApplication(sys.argv)
 
         try:
             self.scale_factor = self.calculate_scale_factor(self.app)
@@ -70,12 +92,29 @@ class AppRunner:
             self.scale_factor = 1
             self.logger.debug(f"Default scale factor: {self.scale_factor}, Exception: {e}")
 
-        MainWindow = QtWidgets.QMainWindow()
+        self.main_window = QtWidgets.QMainWindow()
         ui = Nyx(self.app, self.scale_factor)
-        ui.setupUi(MainWindow)
-        MainWindow.setWindowTitle("Nyx")
-        MainWindow.show()
-        sys.exit(self.app.exec() + 69)
+        ui.setupUi(self.main_window)
+        self.main_window.setWindowTitle("Nyx")
+        self.main_window.show()
+
+        # Override the close event
+        self.main_window.closeEvent = self.close_event
+
+        # Connect the minimize event
+        self.main_window.changeEvent = self.change_event
+
+        self.tray_icon.show()
+        sys.exit(self.app.exec())
+
+    def close_event(self, event):
+        event.ignore()
+        self.hide_window()
+
+    def change_event(self, event):
+        if event.type() == QtCore.QEvent.WindowStateChange:
+            if self.main_window.isMinimized():
+                self.hide_window()
 
 if __name__ == "__main__":
     # Pyinstaller fix
