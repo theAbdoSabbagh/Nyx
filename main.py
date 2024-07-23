@@ -20,6 +20,19 @@ os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 class AppRunner:
     def __init__(self):
+        # Initialize the mutex to check for existing instances
+        self.mutex = QtCore.QSharedMemory("unique_application_key")
+        if self.mutex.attach(QtCore.QSharedMemory.ReadOnly):
+            # Only show notification if this is the main instance
+            if not hasattr(sys, '_called_from_test'):
+                self.show_instance_notification()
+            sys.exit(0)  # Exit if another instance is running
+        
+        # Try to create the mutex
+        if not self.mutex.create(1):
+            print("Failed to create mutex.")
+            sys.exit(1)
+
         with Timer(__class__.__name__):
             self.app = QtWidgets.QApplication(sys.argv)
             self.logger = Logger()
@@ -33,6 +46,33 @@ class AppRunner:
 
     def _custom_excepthook(self, exception_type, exception_value, traceback):
         self.error_dumper.dump_error(exception_type.__name__, str(exception_value))
+
+    def show_instance_notification(self):
+        # Create a QApplication instance to show the notification
+        notification_app = QtWidgets.QApplication(sys.argv)
+        
+        tray_icon = QtWidgets.QSystemTrayIcon()
+        tray_icon.setIcon(QtGui.QIcon("icon/nyx.png"))
+        tray_icon.show()
+        
+        tray_icon.showMessage(
+            "Nyx is already open",
+            "Check the system tray for the running instance.",
+            QtWidgets.QSystemTrayIcon.Warning,
+            5000  # Duration in milliseconds
+        )
+
+        # Create a QDialog to show the message
+        msg_box = QtWidgets.QMessageBox()
+        msg_box.setIcon(QtWidgets.QMessageBox.Warning)
+        msg_box.setText("Another instance of Nyx is already running.")
+        msg_box.setInformativeText("Check the system tray for the running instance.")
+        msg_box.setWindowTitle("Nyx Already Running")
+        msg_box.setModal(True)
+        msg_box.exec_()
+        
+        # Close the notification application
+        notification_app.quit()
 
     def calculate_scale_factor(self, app):
         screen = app.primaryScreen()
@@ -76,7 +116,7 @@ class AppRunner:
 
     def create_tray_icon(self):
         # Load your custom icon
-        icon_path = r"icon\nyx.png"
+        icon_path = r"icon/nyx.png"
         icon = QtGui.QIcon(icon_path)
         self.tray_icon = QtWidgets.QSystemTrayIcon(icon, self.app)
         
