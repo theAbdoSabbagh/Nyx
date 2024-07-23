@@ -1,5 +1,7 @@
-import os, sys, multiprocessing
-from PyQt5 import QtWidgets, QtCore
+import os
+import sys
+import multiprocessing
+from PyQt5 import QtWidgets, QtCore, QtGui
 from backend.logger import Logger
 from backend.error_dumper import ErrorDumper
 from backend.utils import Utils
@@ -18,6 +20,19 @@ os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
 
 class AppRunner:
     def __init__(self):
+        # Initialize the mutex to check for existing instances
+        self.mutex = QtCore.QSharedMemory("unique_application_key")
+        if self.mutex.attach(QtCore.QSharedMemory.ReadOnly):
+            # Only show notification if this is the main instance
+            if not hasattr(sys, '_called_from_test'):
+                self.show_instance_notification()
+            sys.exit(0)  # Exit if another instance is running
+        
+        # Try to create the mutex
+        if not self.mutex.create(1):
+            print("Failed to create mutex.")
+            sys.exit(1)
+
         with Timer(__class__.__name__):
             self.app = QtWidgets.QApplication(sys.argv)
             self.logger = Logger()
@@ -27,12 +42,26 @@ class AppRunner:
             self.error_dumper = ErrorDumper(self.error_logs_path)
             # Set the custom excepthook
             sys.excepthook = self._custom_excepthook
+            self.tray_icon = None
 
     def _custom_excepthook(self, exception_type, exception_value, traceback):
-        self.error_dumper.dump_error(
-            exception_type.__name__,
-            str(exception_value),
-        )
+        self.error_dumper.dump_error(exception_type.__name__, str(exception_value))
+
+    def show_instance_notification(self):
+        # Create a QApplication instance to show the notification
+        notification_app = QtWidgets.QApplication(sys.argv)
+        
+        # Create a QDialog to show the message
+        msg_box = QtWidgets.QMessageBox()
+        msg_box.setIcon(QtWidgets.QMessageBox.Warning)
+        msg_box.setText("Another instance of Nyx is already running.")
+        msg_box.setInformativeText("Check the system tray for the running instance.")
+        msg_box.setWindowTitle("Nyx Already Running")
+        msg_box.setModal(True)
+        msg_box.exec_()
+        
+        # Close the notification application
+        notification_app.quit()
 
     def calculate_scale_factor(self, app):
         screen = app.primaryScreen()
@@ -58,10 +87,53 @@ class AppRunner:
 
         return scale_factor
 
+    def hide_window(self):
+        self.main_window.hide()
+        if self.tray_icon:
+            self.tray_icon.setVisible(True)
+
+    def show_window(self):
+        self.main_window.showNormal()
+        self.main_window.activateWindow()
+        if self.tray_icon:
+            self.tray_icon.setVisible(False)
+
+    def exit_app(self):
+        if self.tray_icon:
+            self.tray_icon.setVisible(False)
+        QtWidgets.QApplication.quit()
+
+    def create_tray_icon(self):
+        # Load your custom icon
+        icon_path = os.path.join(os.path.dirname(sys.argv[0]), "frontend/icons/nyx.png")
+        if not os.path.exists(icon_path):
+            if hasattr(sys, '_MEIPASS'):
+                icon_path = os.path.join(sys._MEIPASS, "frontend/icons/nyx.png")
+        
+        icon = QtGui.QIcon(icon_path)
+        self.tray_icon = QtWidgets.QSystemTrayIcon(icon, self.app)
+        
+        # Create the context menu
+        tray_menu = QtWidgets.QMenu()
+        show_action = tray_menu.addAction("Show")
+        exit_action = tray_menu.addAction("Exit Nyx")
+        
+        show_action.triggered.connect(self.show_window)
+        exit_action.triggered.connect(self.exit_app)
+        
+        self.tray_icon.setContextMenu(tray_menu)
+        
+        # Connect the activated signal to handle left-click event
+        self.tray_icon.activated.connect(self.on_tray_icon_activated)
+        
+        self.tray_icon.show()
+
+    def on_tray_icon_activated(self, reason):
+        if reason == QtWidgets.QSystemTrayIcon.Trigger:
+            self.show_window()
+
     def run(self):
         self.logger.debug("Displaying main window")
-        self.app = None
-        self.app = QtWidgets.QApplication(sys.argv)
 
         try:
             self.scale_factor = self.calculate_scale_factor(self.app)
@@ -70,12 +142,29 @@ class AppRunner:
             self.scale_factor = 1
             self.logger.debug(f"Default scale factor: {self.scale_factor}, Exception: {e}")
 
-        MainWindow = QtWidgets.QMainWindow()
+        self.main_window = QtWidgets.QMainWindow()
         ui = Nyx(self.app, self.scale_factor)
-        ui.setupUi(MainWindow)
-        MainWindow.setWindowTitle("Nyx")
-        MainWindow.show()
-        sys.exit(self.app.exec() + 69)
+        ui.setupUi(self.main_window)
+        self.main_window.setWindowTitle("Nyx")
+        self.main_window.show()
+
+        # Override the close event
+        self.main_window.closeEvent = self.close_event
+
+        # Connect the minimize event
+        self.main_window.changeEvent = self.change_event
+
+        self.create_tray_icon()
+        sys.exit(self.app.exec())
+
+    def close_event(self, event):
+        event.ignore()
+        self.hide_window()
+
+    def change_event(self, event):
+        if event.type() == QtCore.QEvent.WindowStateChange:
+            if self.main_window.isMinimized():
+                self.hide_window()
 
 if __name__ == "__main__":
     # Pyinstaller fix
