@@ -1,11 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
 
-
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('frontend/icons/nyx.png', 'frontend/icons')],
+    datas=[
+        ('frontend/icons/nyx.png', 'frontend/icons'),
+        ('frontend/sounds/UIClick.wav', 'frontend/sounds')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,5 +36,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['frontend\\icons\\nyx.ico'],
+    icon=['frontend/icons/nyx.ico'],
 )
