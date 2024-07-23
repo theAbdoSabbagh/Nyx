@@ -1,8 +1,6 @@
 import os
 import sys
 import multiprocessing
-import pystray
-from PIL import Image
 from PyQt5 import QtWidgets, QtCore, QtGui
 from backend.logger import Logger
 from backend.error_dumper import ErrorDumper
@@ -63,32 +61,35 @@ class AppRunner:
     def hide_window(self):
         self.main_window.hide()
         if self.tray_icon:
-            self.tray_icon.visible = True
+            self.tray_icon.setVisible(True)
 
-    def show_window(self, icon, item):
+    def show_window(self):
         self.main_window.showNormal()
         self.main_window.activateWindow()
         if self.tray_icon:
-            self.tray_icon.visible = False
+            self.tray_icon.setVisible(False)
 
-    def exit_app(self, icon, item):
+    def exit_app(self):
         if self.tray_icon:
-            self.tray_icon.visible = False
-        self.app.quit()
+            self.tray_icon.setVisible(False)
+        QtWidgets.QApplication.quit()
 
     def create_tray_icon(self):
         # Load your custom icon
         icon_path = r"icon\nyx.png"
-        image = Image.open(icon_path)
-        self.tray_icon = pystray.Icon("Nyx", image, "Nyx", self.create_tray_menu())
-        self.tray_icon.run()
-
-    def create_tray_menu(self):
-        menu = pystray.Menu(
-            pystray.MenuItem("Show", self.show_window),
-            pystray.MenuItem("Exit Nyx", self.exit_app)
-        )
-        return menu
+        icon = QtGui.QIcon(icon_path)
+        self.tray_icon = QtWidgets.QSystemTrayIcon(icon, self.app)
+        
+        # Create the context menu
+        tray_menu = QtWidgets.QMenu()
+        show_action = tray_menu.addAction("Show")
+        exit_action = tray_menu.addAction("Exit Nyx")
+        
+        show_action.triggered.connect(self.show_window)
+        exit_action.triggered.connect(self.exit_app)
+        
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.show()
 
     def run(self):
         self.logger.debug("Displaying main window")
