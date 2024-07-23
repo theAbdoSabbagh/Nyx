@@ -51,17 +51,6 @@ class AppRunner:
         # Create a QApplication instance to show the notification
         notification_app = QtWidgets.QApplication(sys.argv)
         
-        tray_icon = QtWidgets.QSystemTrayIcon()
-        tray_icon.setIcon(QtGui.QIcon("icon/nyx.png"))
-        tray_icon.show()
-        
-        tray_icon.showMessage(
-            "Nyx is already open",
-            "Check the system tray for the running instance.",
-            QtWidgets.QSystemTrayIcon.Warning,
-            5000  # Duration in milliseconds
-        )
-
         # Create a QDialog to show the message
         msg_box = QtWidgets.QMessageBox()
         msg_box.setIcon(QtWidgets.QMessageBox.Warning)
