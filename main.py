@@ -105,7 +105,11 @@ class AppRunner:
 
     def create_tray_icon(self):
         # Load your custom icon
-        icon_path = r"frontend/icons/nyx.png"
+        icon_path = os.path.join(os.path.dirname(sys.argv[0]), "frontend/icons/nyx.png")
+        if not os.path.exists(icon_path):
+            if hasattr(sys, '_MEIPASS'):
+                icon_path = os.path.join(sys._MEIPASS, "frontend/icons/nyx.png")
+        
         icon = QtGui.QIcon(icon_path)
         self.tray_icon = QtWidgets.QSystemTrayIcon(icon, self.app)
         
@@ -118,7 +122,15 @@ class AppRunner:
         exit_action.triggered.connect(self.exit_app)
         
         self.tray_icon.setContextMenu(tray_menu)
+        
+        # Connect the activated signal to handle left-click event
+        self.tray_icon.activated.connect(self.on_tray_icon_activated)
+        
         self.tray_icon.show()
+
+    def on_tray_icon_activated(self, reason):
+        if reason == QtWidgets.QSystemTrayIcon.Trigger:
+            self.show_window()
 
     def run(self):
         self.logger.debug("Displaying main window")
