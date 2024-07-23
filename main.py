@@ -118,7 +118,15 @@ class AppRunner:
         exit_action.triggered.connect(self.exit_app)
         
         self.tray_icon.setContextMenu(tray_menu)
+        
+        # Connect the activated signal to handle left-click event
+        self.tray_icon.activated.connect(self.on_tray_icon_activated)
+        
         self.tray_icon.show()
+
+    def on_tray_icon_activated(self, reason):
+        if reason == QtWidgets.QSystemTrayIcon.Trigger:
+            self.show_window()
 
     def run(self):
         self.logger.debug("Displaying main window")
