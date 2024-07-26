@@ -2,6 +2,11 @@ import os
 import sys
 import multiprocessing
 from PyQt5 import QtWidgets, QtCore, QtGui
+
+# Add the project root directory to the Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
 from backend.logger import Logger
 from backend.error_dumper import ErrorDumper
 from backend.utils import Utils
@@ -43,6 +48,7 @@ class AppRunner:
             # Set the custom excepthook
             sys.excepthook = self._custom_excepthook
             self.tray_icon = None
+            self.start_minimized = "--minimized" in sys.argv  # Add this line
 
     def _custom_excepthook(self, exception_type, exception_value, traceback):
         self.error_dumper.dump_error(exception_type.__name__, str(exception_value))
@@ -104,7 +110,6 @@ class AppRunner:
         QtWidgets.QApplication.quit()
 
     def create_tray_icon(self):
-        # Load your custom icon
         icon_path = os.path.join(os.path.dirname(sys.argv[0]), "frontend/icons/nyx.png")
         if not os.path.exists(icon_path):
             if hasattr(sys, '_MEIPASS'):
@@ -146,7 +151,11 @@ class AppRunner:
         ui = Nyx(self.app, self.scale_factor)
         ui.setupUi(self.main_window)
         self.main_window.setWindowTitle("Nyx")
-        self.main_window.show()
+        
+        if self.start_minimized:  
+            self.hide_window()
+        else:
+            self.main_window.show()
 
         # Override the close event
         self.main_window.closeEvent = self.close_event

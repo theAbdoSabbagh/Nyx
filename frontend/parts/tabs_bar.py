@@ -34,13 +34,15 @@ class TabsBar(QtWidgets.QFrame):
         self.setObjectName("frame")
 
         self.device_monitor_button = self.create_push_button(50, 0, 281, 61, "Device Monitor", 14, "chart", False)
-        self.gaming_mode_button = self.create_push_button(370, 0, 261, 61, "Gaming Mode", 14, "joystick", False)
-        self.turbo_mode_button = self.create_push_button(670, 0, 231, 61, "Turbo Mode", 14, "bolt", False)
-        self.settings_button = self.create_push_button(940, 0, 201, 61, "Settings", 14, "cog", False)
-        self.discord_button = self.create_push_button(1240, 0, 141, 61, "Discord", 14, "discord", True)
+        self.settings_button = self.create_push_button(370, 0, 201, 61, "Settings", 14, "cog", False)
+        
 
         self.last_button = None
         self.choose_button(self.device_monitor_button)
+
+        # Connect buttons to their respective functions
+        self.device_monitor_button.clicked.connect(self.on_device_monitor_clicked)
+        self.settings_button.clicked.connect(self.on_settings_clicked)
 
     def create_push_button(self, x_position: int, y_position: int, width: int, height: int, text: str, font_size: int, icon_name: Optional[str] = None, interactive_hover: bool = False) -> QtWidgets.QPushButton:
         button = QtWidgets.QPushButton(self)
@@ -85,3 +87,9 @@ class TabsBar(QtWidgets.QFrame):
         button.setStyleSheet(stylesheet)
         self.logger.debug(f"Chose {button.text()}")
         self.last_button = button
+
+    def on_settings_clicked(self):
+        self.father.show_settings_page()
+
+    def on_device_monitor_clicked(self):
+        self.father.show_device_monitor_page()

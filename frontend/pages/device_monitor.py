@@ -57,43 +57,43 @@ class DeviceMonitor(QtWidgets.QFrame):
             )[0]
 
             self.computer_model = self.create_label(
-                50, 40, 241, 61, "Computer Model", self.source_sans_3_black, 16, True,
-                function = self.nyx_base.get_computer_model, timer_interval = 0
+                50, 40, 241, 61, "Computer Model", self.source_sans_3_black, 10, True,
+                function=self.nyx_base.get_computer_model, timer_interval=0
             )
             self.cpu_usage_label = self.create_label(
-                50, 100, 131, 51, "CPU Usage", self.source_sans_3, 15, True,
+                50, 100, 131, 51, "CPU Usage", self.source_sans_3, 10, True,
             )
             self.gpu_usage_label = self.create_label(
-                450, 100, 131, 51, "GPU Usage", self.source_sans_3, 15, True,
+                450, 100, 131, 51, "GPU Usage", self.source_sans_3, 10, True,
             )
 
-            self.gpu_usage_progress = QRoundProgressBar(self, font_size = 30, default_color = QtGui.QColor(42, 43, 42, 255),
-                progress_color = QtGui.QColor(22, 23, 22, 255), inner_background_color = QtGui.QColor(32, 33, 32, 255), width = 0.175)
+            self.gpu_usage_progress = QRoundProgressBar(self, font_size=30, default_color=QtGui.QColor(42, 43, 42, 255),
+                progress_color=QtGui.QColor(22, 23, 22, 255), inner_background_color=QtGui.QColor(32, 33, 32, 255), width=0.175)
             self.gpu_usage_progress.setGeometry(QtCore.QRect(470, 160, 241, 241))
             gpu_usage_updater = LabelUpdater(self.nyx_base.get_gpu_usage, 1000)
             gpu_usage_updater.update_signal.connect(lambda value: self.gpu_usage_progress.set_value(int(float(value))))
             gpu_usage_updater.start()
 
-            self.cpu_usage_progress = QRoundProgressBar(self, font_size = 30, default_color = QtGui.QColor(42, 43, 42, 255),
-                progress_color = QtGui.QColor(22, 23, 22, 255), inner_background_color = QtGui.QColor(32, 33, 32, 255), width = 0.175)
+            self.cpu_usage_progress = QRoundProgressBar(self, font_size=30, default_color=QtGui.QColor(42, 43, 42, 255),
+                progress_color=QtGui.QColor(22, 23, 22, 255), inner_background_color=QtGui.QColor(32, 33, 32, 255), width=0.175)
             self.cpu_usage_progress.setGeometry(QtCore.QRect(70, 160, 241, 241))
             cpu_usage_updater = LabelUpdater(self.nyx_base.get_cpu_usage, 1000)
             cpu_usage_updater.update_signal.connect(lambda value: self.cpu_usage_progress.set_value(int(float(value))))
             cpu_usage_updater.start()
 
             self.harddisk_bar = TextifiedProgressBar(
-                parent = self,
-                value = -1,
-                label_text = "Disk",
-                label_font_size = 16,
-                label_pos_x = 50,
-                label_pos_y = 450,
-                label_width = 201,
-                label_height = 51,
-                progress_bar_pos_x = 80,
-                progress_bar_pos_y = 570,
-                progress_bar_width = 221,
-                progress_bar_height = 16,
+                parent=self,
+                value=-1,
+                label_text="Disk",
+                label_font_size=10,  # Adjusted font size to 10
+                label_pos_x=50,
+                label_pos_y=450,
+                label_width=201,
+                label_height=51,
+                progress_bar_pos_x=80,
+                progress_bar_pos_y=570,
+                progress_bar_width=221,
+                progress_bar_height=16,
             )
             harddisk_bar_updater = LabelUpdater(lambda: self.nyx_base.get_harddisk_info().used_percent, 60 * 1000)
             harddisk_bar_updater.update_signal.connect(lambda value: self.harddisk_bar.set_value(value))
@@ -102,18 +102,18 @@ class DeviceMonitor(QtWidgets.QFrame):
             harddisk_label_updater.update_signal.connect(lambda value: self.harddisk_bar.label.setText(value))
             harddisk_label_updater.start()
             self.memory_bar = TextifiedProgressBar(
-                parent = self,
-                value = -1,
-                label_text = "Memory",
-                label_font_size = 16,
-                label_pos_x = 450,
-                label_pos_y = 450,
-                label_width = 101,
-                label_height = 51,
-                progress_bar_pos_x = 480,
-                progress_bar_pos_y = 570,
-                progress_bar_width = 221,
-                progress_bar_height = 16,
+                parent=self,
+                value=-1,
+                label_text="Memory",
+                label_font_size=10,  # Adjusted font size to 10
+                label_pos_x=450,
+                label_pos_y=450,
+                label_width=101,
+                label_height=51,
+                progress_bar_pos_x=480,
+                progress_bar_pos_y=570,
+                progress_bar_width=221,
+                progress_bar_height=16,
             )
             memory_bar_updater = LabelUpdater(lambda: self.nyx_base.get_ram_info().used_percent, 1000)
             memory_bar_updater.update_signal.connect(lambda value: self.memory_bar.set_value(value))
@@ -122,7 +122,7 @@ class DeviceMonitor(QtWidgets.QFrame):
             # Creating the scrollable frame and area
             self.scroll_frame = self.create_frame(
                 self, 860, 140, 541, 531,
-                stylesheet = "QScrollArea { border: none; }\nQScrollBar:vertical { background: transparent; width: 12px; margin: 2px 0 2px 0; border-radius: 6px; }\nQScrollBar::handle:vertical { background: rgb(90,93,90); min-height: 20px; border-radius: 6px; }\nQScrollBar::handle:vertical:hover { background: rgb(80,83,80); }\nQScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: none; height: 0; }\nQScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }\n"
+                stylesheet="QScrollArea { border: none; }\nQScrollBar:vertical { background: transparent; width: 12px; margin: 2px 0 2px 0; border-radius: 6px; }\nQScrollBar::handle:vertical { background: rgb(90,93,90); min-height: 20px; border-radius: 6px; }\nQScrollBar::handle:vertical:hover { background: rgb(80,83,80); }\nQScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { background: none; height: 0; }\nQScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: none; }\n"
             )
 
             self.scroll_area = QtWidgets.QScrollArea(self.scroll_frame)
@@ -139,27 +139,40 @@ class DeviceMonitor(QtWidgets.QFrame):
             self.scrollable_content_frame = self.create_frame(self.scrollable_content, 0, 0, 519, 658, "transparent")
             self.scrollable_content_frame.setMinimumSize(QtCore.QSize(0, 640))
 
-            cpu_info_row = self.create_info_row("Loading", function = self.nyx_base.get_cpu_name)
-            gpu_info_row = self.create_info_row("Loading", function = self.nyx_base.get_gpu_name)
+            
+            self.nyx_eyes_label = QtWidgets.QLabel(self)
+            self.nyx_eyes_label.setGeometry(QtCore.QRect(880, 100, 32, 33)) 
+            self.nyx_eyes_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            self.nyx_eyes_label.setStyleSheet("QLabel { background-color: none; }")
+
+ 
+            nyx_eyes_pixmap = QtGui.QPixmap("frontend/img/eyes.png")
+            self.nyx_eyes_label.setPixmap(nyx_eyes_pixmap)
+            self.nyx_eyes_label.setScaledContents(True)  
+         
+            self.this_computer_label = self.create_label(
+                840, 100, 300, 30, "System Stats", self.source_sans_3_black, 14, True, underline=True
+            )
+
+            cpu_info_row = self.create_info_row("Loading", function=self.nyx_base.get_cpu_name)
+            gpu_info_row = self.create_info_row("Loading", function=self.nyx_base.get_gpu_name)
             cpu_temperature_info_row = self.create_info_row(
                 "CPU Temperature", "?°C",
-                function = lambda: f"{round(self.nyx_base.get_cpu_temperature(), 1)}°C",
-                timer_interval = 2500)
+                function=lambda: f"{round(self.nyx_base.get_cpu_temperature(), 1)}°C",
+                timer_interval=2500)
             gpu_temperature_info_row = self.create_info_row(
                 "GPU Temperature", "?°C",
-                function = lambda: f"{round(self.nyx_base.get_gpu_temperature(), 1)}°C",
-                timer_interval = 2500)
-            ram_info_row = self.create_info_row("RAM", "Loading", function = lambda: f"{self.nyx_base.get_ram_info().total} GB")
-            disk_info_row = self.create_info_row("Disk", "Loading", function = lambda: f"{self.nyx_base.get_disk_io_percentage():.2f}%")
-            # fan_1_info_row = self.create_info_row("Fan 1", "0 RPM")
-            # fan_2_info_row = self.create_info_row("Fan 2", "0 RPM")
-            wifi_download_info_row = self.create_info_row("WiFi (Download)", "? Bytes/s", function = lambda: f"{self.nyx_base.get_network_speed('Wi-Fi').download_labelized}", timer_interval = 250)
-            wifi_upload_info_row = self.create_info_row("WiFi (Upload)", "? Bytes/s", function = lambda: f"{self.nyx_base.get_network_speed('Wi-Fi').upload_labelized}", timer_interval = 250)
-            lan_download_info_row = self.create_info_row("LAN (Download)", "? Bytes/s", function = lambda: f"{self.nyx_base.get_network_speed('Ethernet').download_labelized}", timer_interval = 250)
-            lan_upload_info_row = self.create_info_row("LAN (Upload)", "? Bytes/s", function = lambda: f"{self.nyx_base.get_network_speed('Ethernet').upload_labelized}", timer_interval = 250)
-            gpu_clock_info_row = self.create_info_row("GPU Clock", "? MHz", function = lambda: f"{self.nyx_base.get_gpu_clock()} MHZ", timer_interval = 10000)
-            vram_clock_info_row = self.create_info_row("VRAM Clock", "? MHz", function = lambda: f"{int(self.nyx_base.get_ram_info().clock)} MHZ", timer_interval = 10000)
-            power_plan_info_row = self.create_info_row("Power Plan", "Loading", function = self.nyx_base.get_power_plan)
+                function=lambda: f"{round(self.nyx_base.get_gpu_temperature(), 1)}°C",
+                timer_interval=2500)
+            ram_info_row = self.create_info_row("RAM", "Loading", function=lambda: f"{self.nyx_base.get_ram_info().total} GB")
+            disk_info_row = self.create_info_row("Disk", "Loading", function=lambda: f"{self.nyx_base.get_disk_io_percentage():.2f}%")
+            wifi_download_info_row = self.create_info_row("WiFi (Download)", "? Bytes/s", function=lambda: f"{self.nyx_base.get_network_speed('Wi-Fi').download_labelized}", timer_interval=250)
+            wifi_upload_info_row = self.create_info_row("WiFi (Upload)", "? Bytes/s", function=lambda: f"{self.nyx_base.get_network_speed('Wi-Fi').upload_labelized}", timer_interval=250)
+            lan_download_info_row = self.create_info_row("LAN (Download)", "? Bytes/s", function=lambda: f"{self.nyx_base.get_network_speed('Ethernet').download_labelized}", timer_interval=250)
+            lan_upload_info_row = self.create_info_row("LAN (Upload)", "? Bytes/s", function=lambda: f"{self.nyx_base.get_network_speed('Ethernet').upload_labelized}", timer_interval=250)
+            gpu_clock_info_row = self.create_info_row("GPU Clock", "? MHz", function=lambda: f"{self.nyx_base.get_gpu_clock()} MHZ", timer_interval=10000)
+            vram_clock_info_row = self.create_info_row("VRAM Clock", "? MHz", function=lambda: f"{int(self.nyx_base.get_ram_info().clock)} MHZ", timer_interval=10000)
+            power_plan_info_row = self.create_info_row("Power Plan", "Loading", function=self.nyx_base.get_power_plan)
 
             # Adding the content frame to the layout
             self.vertical_layout.addWidget(self.scrollable_content_frame)
@@ -173,12 +186,13 @@ class DeviceMonitor(QtWidgets.QFrame):
         height: int,
         text: str,
         font_name: str,
-        font_size: int,
+        font_size: int = 10,  # Adjusted font size to 10
         is_bold: bool = False,
         parent: Optional[QtWidgets.QWidget] = None,
-        alignment:QtCore.Qt.AlignmentFlag =QtCore.Qt.AlignmentFlag.AlignCenter,
+        alignment: QtCore.Qt.AlignmentFlag = QtCore.Qt.AlignmentFlag.AlignCenter,
         function: Optional[Callable] = None,
         timer_interval: int = 0,
+        underline: bool = False,  # Added underline parameter
     ):
         label = QtWidgets.QLabel(parent or self)
         label.setGeometry(QtCore.QRect(x_position, y_position, width, height))
@@ -186,6 +200,7 @@ class DeviceMonitor(QtWidgets.QFrame):
         font.setFamily(font_name)
         font.setPointSize(font_size)
         font.setBold(is_bold)
+        font.setUnderline(underline)  # Set underline
         font.setWeight(75 if is_bold else 50)
         label.setFont(font)
         label.setStyleSheet("QLabel { background-color: none; color: white; }")
@@ -239,42 +254,42 @@ class DeviceMonitor(QtWidgets.QFrame):
         
         # Creating the frame
         self.information_rows[index] = self.create_frame(
-            parent = self.scrollable_content_frame,
-            x_position = 0,
-            y_position = -10 if index == 0 else index * 50,
-            width = 481,
-            height = 51,
-            bg_color = "rgb(42, 43, 42)" if dark else "transparent",
+            parent=self.scrollable_content_frame,
+            x_position=0,
+            y_position=-10 if index == 0 else index * 50,
+            width=481,
+            height=51,
+            bg_color="rgb(42, 43, 42)" if dark else "transparent",
         )
 
         # Creating the label
         first_label = self.create_label(
-            x_position = 10,
-            y_position = 0,
-            width = 211 if double_label else 471,
-            height = 51,
-            text = label_text,
-            font_name = self.source_sans_3,
-            font_size = 12,
-            is_bold = False,
-            parent = self.information_rows[index],
-            alignment = QtCore.Qt.AlignmentFlag.AlignLeft|QtCore.Qt.AlignmentFlag.AlignVCenter, # type: ignore
+            x_position=10,
+            y_position=0,
+            width=211 if double_label else 471,
+            height=51,
+            text=label_text,
+            font_name=self.source_sans_3,
+            font_size=10,  # Adjusted font size to 10
+            is_bold=False,
+            parent=self.information_rows[index],
+            alignment=QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.AlignmentFlag.AlignVCenter,  # type: ignore
         )
 
         if double_label:
             second_label = self.create_label(
-                x_position = 260,
-                y_position = 0,
-                width = 211,
-                height = 51,
-                text = value_text, # type: ignore
-                font_name = self.source_sans_3,
-                font_size = 12,
-                is_bold = False,
-                parent = self.information_rows[index],
-                alignment = QtCore.Qt.AlignmentFlag.AlignRight|QtCore.Qt.AlignmentFlag.AlignVCenter, # type: ignore
+                x_position=260,
+                y_position=0,
+                width=211,
+                height=51,
+                text=value_text,  # type: ignore
+                font_name=self.source_sans_3,
+                font_size=10,  # Adjusted font size to 10
+                is_bold=False,
+                parent=self.information_rows[index],
+                alignment=QtCore.Qt.AlignmentFlag.AlignRight | QtCore.Qt.AlignmentFlag.AlignVCenter,  # type: ignore
             )
-        
+
         if function:
             label_updater = LabelUpdater(function, timer_interval)
             if double_label:

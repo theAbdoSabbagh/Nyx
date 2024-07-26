@@ -27,7 +27,7 @@ class TitleBar(QtWidgets.QFrame):
             self.setFrameShadow(QtWidgets.QFrame.Raised)
             self.setObjectName("frame")
 
-            self.titlebar_nyx = self.create_label(20, 0, 61, 51, "Nyx", 16, True)
+            self.titlebar_nyx = self.create_label(20, 0, 200, 51, "Nyx (Alpha)", 16, True)
             self.titlebar_quit = QuitButton(father)
             self.titlebar_quit.setGeometry(QtCore.QRect(1340, 0, 71, 51))
             self.titlebar_quit.setParent(self)
