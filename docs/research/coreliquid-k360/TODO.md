@@ -1,0 +1,6 @@
+[ ] Wireshark USB dump of: USB Input Device: 0000.0014.0000.013.002.000.000.000.000	USB Input Device	HID (Human Interface Device)	Yes	Yes	No	No			21/08/2024 06:58	21/08/2024 06:58	0db0	b130	1		3	0	0		XXHOSTNAMEXX			8&c24c4ca&0	HidUsb	@input.inf,%HID.SvcDesc%;Microsoft HID Class Driver	hidusb.sys		(Standard system devices)				USB Input Device	10.0.22621.3672	HID_Inst.NT	input.inf	USB\VID_0DB0&PID_B130&MI_01\7&28ec2784&0&0001	SurpriseRemovalOK					
+
+[ ] Wireshark USB dump of: USB Device: MPG CORELIQUID	USB Composite Device	Unknown	Yes	Yes	No	No		XXSERIALNOXX	21/08/2024 06:58	21/02/2024 23:11	0db0	b130	1		0	0	0		XXHOSTNAMEXX			7&28ec2784&0	usbccgp	@usb.inf,%GenericParent.SvcDesc%;Microsoft USB Generic Parent Driver	usbccgp.sys		(Standard USB Host Controller)		500 mA	2	USB Composite Device	10.0.22621.3672	Composite.Dev.NT	usb.inf	USB\VID_0DB0&PID_B130\A02021031800	Removable, UniqueID, SurpriseRemovalOK					
+
+[ ] Wireshark USB dump of: WinUsb Device: 0000.0014.0000.013.002.000.000.000.000	WinUsb Device	Vendor Specific	Yes	No	No	No			21/02/2024 23:11	21/02/2024 23:11	0db0	b130	1	WINUSB	ff	ff	0		XXHOSTNAMEXX				WINUSB	@oem191.inf,%WinUSB_SvcDesc%;SAMSUNG Android USB Driver	WinUsb.sys		WinUsb Device	MPG CORELIQUID			WinUsb Device	10.0.22621.2506	WINUSB.NT	winusb.inf	USB\VID_0DB0&PID_B130&MI_00\7&28ec2784&0&0000						
+
